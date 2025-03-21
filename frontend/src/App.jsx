@@ -6,6 +6,7 @@ import QuestionList from './components/QuestionList';
 import AskQuestion from './components/AskQuestion';
 import Home from './components/Home';
 import QuestionDetail from './components/QuestionDetail';
+import MyQuestions from './components/MyQuestions';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/questions" element={<QuestionList />} />
             <Route path="/ask" element={<AskQuestion />} />
             <Route path="/question/:id" element={<QuestionDetail />} />
+            <Route path="/my-questions" element={<MyQuestions />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Box>
