@@ -1,0 +1,78 @@
+﻿StackTalk – Q&A Platform
+Overview
+StackTalk is a Q&A platform where users can:
+* Enter a unique username (no authentication required)
+* Ask questions
+* View and answer other users' questions
+The platform is built using two backend services:
+* User Service – Manages usernames and question ownership
+* QnA Service – Manages questions and answers
+________________
+
+
+Tech Stack
+* Frontend: React.js
+* Backend: Node.js (2 separate services)
+* Database: Your Choice
+________________
+
+
+System Architecture
+1. User Service
+Responsibilities:
+* Store and manage unique usernames
+* Track questions asked by each user
+APIs:
+* POST /user – Create or fetch a user
+* GET /user/:username/questions – Get all questions by a user
+2. QnA Service
+Responsibilities:
+* Manage all questions and answers
+APIs:
+* POST /questions – Ask a new question ({ username, title, body })
+* GET /questions – Get all questions
+* GET /questions/:id – Get a question and its answers
+* POST /questions/:id/answers – Add an answer ({ username, answer })
+________________
+
+
+Frontend Routes (React.js)
+* /
+ Enter a unique username
+On submit → Redirect to /questions (pass username via context or props)
+
+* /questions
+ View all questions
+Button to ask a question → /ask
+ Button to view your questions → /my-questions
+
+* /ask
+ Form to submit a new question (title and body)
+On submit → POST to QnA Service with current username
+
+* /questions/:id
+ View a specific question and its answers
+Input to submit a new answer
+
+* /my-questions
+ View all questions asked by the current user
+
+________________
+
+
+URL Structure
+   * localhost:3000/ – Enter unique username
+   * localhost:3000/questions – View all questions
+   * localhost:3000/ask – Ask a new question
+   * localhost:3000/questions/:id – View and answer a question
+   * localhost:3000/my-questions – View your own questions
+________________
+
+
+Evaluation Criteria
+   * React development - 5marks
+   * Backend development - 5marks
+Deadline
+   * 2hrs
+Git Commit
+   * Every 30 mins
