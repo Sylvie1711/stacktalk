@@ -7,15 +7,17 @@ import {
   Paper,
   Box,
   Chip,
-  Button
+  Button,
+  CircularProgress
 } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { qnaService } from '../services/api';
 
 const QuestionList = () => {
   const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     // Check if user is logged in
@@ -27,10 +29,11 @@ const QuestionList = () => {
 
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/questions');
-        setQuestions(response.data);
+        const data = await qnaService.getAllQuestions();
+        setQuestions(data);
       } catch (error) {
         console.error('Error fetching questions:', error);
+        setError('Failed to load questions. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -41,8 +44,34 @@ const QuestionList = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        <Typography>Loading...</Typography>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        minHeight: '60vh'
+      }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        minHeight: '60vh',
+        flexDirection: 'column',
+        gap: 2
+      }}>
+        <Typography color="error">{error}</Typography>
+        <Button 
+          variant="contained" 
+          onClick={() => window.location.reload()}
+        >
+          Try Again
+        </Button>
       </Box>
     );
   }

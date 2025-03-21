@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import { 
-  Paper, 
   TextField, 
   Button, 
   Typography, 
   Box,
-  Container,
   Card,
-  CardContent
+  CardContent,
+  CircularProgress
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import { userService } from '../services/api';
 
 const Home = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,25 +25,48 @@ const Home = () => {
       setError('Username is required');
       return;
     }
+
+    setIsLoading(true);
+    setError('');
     
     try {
+      // Check if username is available
+      const { isAvailable } = await userService.checkUsername(username);
+      
+      if (!isAvailable) {
+        setError('Username is already taken');
+        setIsLoading(false);
+        return;
+      }
+      
+      // Create new user
+      const user = await userService.createUser(username);
+      
       // Store username in localStorage
       localStorage.setItem('username', username);
-      
-      // In a real app, we would call the User Service API here:
-      // await axios.post('http://localhost:5001/user', { username });
       
       // Navigate to questions page
       navigate('/questions');
     } catch (error) {
-      setError('Error creating user. Please try again.');
       console.error('Error:', error);
+      setError('Error creating user. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 8 }}>
+    <Box sx={{ 
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '80vh',
+      px: 2
+    }}>
       <Card sx={{ 
+        maxWidth: '450px',
+        width: '100%',
         borderRadius: 3, 
         boxShadow: '0 4px 20px rgba(0,0,0,0.1)', 
         overflow: 'hidden' 
@@ -103,6 +127,7 @@ const Home = () => {
               helperText={error}
               sx={{ mb: 3 }}
               autoFocus
+              disabled={isLoading}
             />
             
             <Button
@@ -110,6 +135,7 @@ const Home = () => {
               variant="contained"
               size="large"
               fullWidth
+              disabled={isLoading}
               sx={{ 
                 py: 1.5, 
                 borderRadius: 2,
@@ -117,12 +143,16 @@ const Home = () => {
                 fontWeight: 500
               }}
             >
-              Get Started
+              {isLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                'Get Started'
+              )}
             </Button>
           </Box>
         </CardContent>
       </Card>
-    </Container>
+    </Box>
   );
 };
 

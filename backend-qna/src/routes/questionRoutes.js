@@ -8,7 +8,8 @@ router.get('/', async (req, res) => {
     const questions = await Question.find().sort({ createdAt: -1 });
     res.json(questions);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error fetching questions:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
@@ -17,11 +18,12 @@ router.get('/:id', async (req, res) => {
   try {
     const question = await Question.findById(req.params.id);
     if (!question) {
-      return res.status(404).json({ message: 'Question not found' });
+      return res.status(404).json({ error: 'Question not found' });
     }
     res.json(question);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error fetching question:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
@@ -31,7 +33,7 @@ router.post('/', async (req, res) => {
     const { username, title, body } = req.body;
     
     if (!username || !title || !body) {
-      return res.status(400).json({ message: 'Username, title and body are required' });
+      return res.status(400).json({ error: 'All fields are required' });
     }
 
     const question = new Question({
@@ -40,32 +42,50 @@ router.post('/', async (req, res) => {
       body
     });
 
-    const savedQuestion = await question.save();
-    res.status(201).json(savedQuestion);
+    await question.save();
+    res.status(201).json(question);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error creating question:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
 // Add an answer to a question
 router.post('/:id/answers', async (req, res) => {
   try {
-    const { username, content } = req.body;
+    const { username, body } = req.body;
     
-    if (!username || !content) {
-      return res.status(400).json({ message: 'Username and answer content are required' });
+    if (!username || !body) {
+      return res.status(400).json({ error: 'Username and answer are required' });
     }
 
     const question = await Question.findById(req.params.id);
+    
     if (!question) {
-      return res.status(404).json({ message: 'Question not found' });
+      return res.status(404).json({ error: 'Question not found' });
     }
 
-    question.answers.push({ username, content });
-    const updatedQuestion = await question.save();
-    res.json(updatedQuestion);
+    question.answers.push({ username, body });
+    await question.save();
+    
+    res.status(201).json(question);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error adding answer:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get questions by username
+router.get('/user/:username', async (req, res) => {
+  try {
+    const questions = await Question.find({ 
+      username: req.params.username 
+    }).sort({ createdAt: -1 });
+    
+    res.json(questions);
+  } catch (error) {
+    console.error('Error fetching user questions:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 

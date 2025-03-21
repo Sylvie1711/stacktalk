@@ -5,7 +5,7 @@ const answerSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  content: {
+  body: {
     type: String,
     required: true
   },
@@ -22,15 +22,11 @@ const questionSchema = new mongoose.Schema({
   },
   title: {
     type: String,
-    required: true,
-    trim: true,
-    minlength: 5
+    required: true
   },
   body: {
     type: String,
-    required: true,
-    trim: true,
-    minlength: 10
+    required: true
   },
   answers: [answerSchema],
   createdAt: {

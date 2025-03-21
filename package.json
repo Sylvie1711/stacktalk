@@ -1,0 +1,19 @@
+{
+  "name": "stacktalk",
+  "version": "1.0.0",
+  "description": "StackTalk Q&A Platform",
+  "main": "index.js",
+  "scripts": {
+    "start:user": "cd backend-user && npm run dev",
+    "start:qna": "cd backend-qna && npm run dev",
+    "start:frontend": "cd frontend && npm run dev",
+    "dev": "echo Running services in separate terminals"
+  },
+  "keywords": [
+    "mern",
+    "q&a",
+    "platform"
+  ],
+  "author": "",
+  "license": "ISC"
+} 
